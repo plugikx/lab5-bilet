@@ -1,0 +1,34 @@
+import numpy as np
+
+# Интерполяционный многочлен Ньютона
+def newton_interpolation(x, y, x_interp):
+    n = len(x)
+    f = np.zeros((n, n))
+    f[:, 0] = y
+    
+    for j in range(1, n):
+        for i in range(j, n):
+            f[i, j] = (f[i, j-1] - f[i-1, j-1]) / (x[i] - x[i-j])
+    
+    interpolated_value = f[0, 0]
+    for j in range(1, n):
+        term = f[j, j]
+        for i in range(j):
+            term *= (x_interp - x[i])
+        interpolated_value += term
+    
+    return f, interpolated_value
+
+# Значения функции y_i = cos(x_i) в заданных точках
+x = np.array([0.1*np.pi, 0.2*np.pi, 0.3*np.pi, 0.4*np.pi])
+y = np.cos(x)
+
+# Построение интерполяционного многочлена Ньютона
+x_interp = 0.25*np.pi
+f, interpolated_value = newton_interpolation(x, y, x_interp)
+print("Interpolated value at x*: ", interpolated_value)
+
+# Вычисление погрешности интерполяции в точке x*
+true_value = np.cos(x_interp)
+error = np.abs(true_value - interpolated_value)
+print("Interpolation error at x*: ", error)
